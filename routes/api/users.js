@@ -8,7 +8,6 @@ const router = express.Router();
 
 /* GET users listing. */
 router.route('/')
-    // This task was either incredibly poorly written or I miss something in a previous exercise. See previous commit.
     .get(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res, next) => {
         User.find()
             .then(users => {
@@ -56,7 +55,7 @@ router.post('/signup', cors.corsWithOptions, (req, res) => {
 });
 
 // TODO: Review login strategies
-router.post('/login', cors.corsWithOptions, passport.authenticate('local', {session: false}), (req, res) => {
+router.post('/login', cors.corsWithOptions, passport.authenticate('local'), (req, res) => {
     // Login Successful, send a response
     const token = authenticate.getToken({_id: req.user.id});
     res.statusCode = 200;
@@ -65,6 +64,7 @@ router.post('/login', cors.corsWithOptions, passport.authenticate('local', {sess
 });
 
 router.get('/logout', cors.corsWithOptions, (req, res, next) => {
+    // TODO find a solution that does not require sessions
     if (req.session) {
         // A session exists. Delete it
         req.session.destroy();
