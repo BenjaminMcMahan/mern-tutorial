@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {Link} from "react-router-dom";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
-import {set} from "mongoose";
 
 const CreateBook = (props) => {
     // Define the state with the useState hook
