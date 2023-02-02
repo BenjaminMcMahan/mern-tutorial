@@ -3,19 +3,18 @@ const express = require('express');
 // Load the Book model
 const Book = require('../../models/Book');
 const cors = require("./cors");
-const authenticate = require("../../authenticate");
 // Define a router
 const bookRouter = express.Router();
 
 
 bookRouter.route('/')
     .options(cors.corsWithOptions, (req, res) => res.sendStatus(200))
-    .get(cors.cors, authenticate.verifyUser, (req, res) => {
+    .get(cors.cors, (req, res) => {
         Book.find()
             .then(books => res.json(books))
             .catch(err => res.status(404).json({noBooksFound: 'No books found'}));
     })
-    .post(cors.cors, authenticate.verifyUser, (req, res) => {
+    .post(cors.cors, (req, res) => {
         Book.create(req.body)
             .then(book => res.json({msg: `Book added successfully, ${book}`}))
             .catch(err => res.status(400).json({error: `Unable to save book, ${err}`}));
@@ -38,7 +37,7 @@ bookRouter.route('/:id')
      * @description Update a book
      * @access Public
      */
-    .put(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
+    .put(cors.corsWithOptions, (req, res) => {
         Book.findByIdAndUpdate(req.params.id, req.body)
             .then(book => res.json({msg: 'Updated successfully'}))
             .catch(err => {
@@ -50,7 +49,7 @@ bookRouter.route('/:id')
      * @description delete a book
      * @access Public
      */
-    .delete(cors.corsWithOptions, authenticate.verifyUser, authenticate.verifyAdmin, (req, res) => {
+    .delete(cors.corsWithOptions, (req, res) => {
         Book.findByIdAndRemove(req.params.id, req.body)
             .then(book => res.json({msg: 'Book entry deleted successfully'}))
             .catch(err => {

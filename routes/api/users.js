@@ -55,27 +55,36 @@ router.post('/signup', cors.corsWithOptions, (req, res) => {
 });
 
 // TODO: Review login strategies
-router.post('/login', cors.corsWithOptions, passport.authenticate('local'), (req, res) => {
-    // Login Successful, send a response
-    const token = authenticate.getToken({_id: req.user.id});
-    res.statusCode = 200;
-    res.setHeader('Content-Type', 'application/json');
-    res.json({success: true, token, status: "You are successfully logged in!"});
-});
-
+// router.post('/login', cors.corsWithOptions, passport.authenticate('local'), (req, res) => {
+//     // Login Successful, send a response
+//     const token = authenticate.getToken({_id: req.user.id});
+//     res.statusCode = 200;
+//     res.setHeader('Content-Type', 'application/json');
+//     res.json({success: true, token, status: "You are successfully logged in!"});
+// });
+router.post('/login', passport.authenticate('local', {
+    successReturnToOrRedirect: '/',
+    failureRedirect: '/login',
+    failureMessage: true
+}));
 router.get('/logout', cors.corsWithOptions, (req, res, next) => {
     // TODO find a solution that does not require sessions
-    if (req.session) {
-        // A session exists. Delete it
-        req.session.destroy();
-        res.clearCookie('session-id'); // Clear the cookie
-        res.redirect('/'); // Redirect to main
-    } else {
-        // The session does not exist, logging out without being logged in
-        const err = new Error('You are not logged in!');
-        err.status = 401;
-        return next(err);
-    }
+    req.logout((err) => {
+        if (err) { return next(err)}
+
+        return res.redirect('/');
+    })
+    // if (req.session) {
+    //     // A session exists. Delete it
+    //     req.session.destroy();
+    //     res.clearCookie('session-id'); // Clear the cookie
+    //     res.redirect('/'); // Redirect to main
+    // } else {
+    //     // The session does not exist, logging out without being logged in
+    //     const err = new Error('You are not logged in!');
+    //     err.status = 401;
+    //     return next(err);
+    // }
 });
 
 router.get('/facebook/token', passport.authenticate('facebook-token'), (req, res) => {
