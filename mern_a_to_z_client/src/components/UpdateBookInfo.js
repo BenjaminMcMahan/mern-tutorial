@@ -52,7 +52,7 @@ const UpdateBookInfo = (props) => {
         };
 
         axios
-            .put(`http://localhost:8082/api/books/${id}`)
+            .put(`http://localhost:8082/api/books/${id}`, data)
             .then((res) => {
                 console.log(res.data);
                 navigate(`/show-book/${id}`); // Navigate to the updated Book
